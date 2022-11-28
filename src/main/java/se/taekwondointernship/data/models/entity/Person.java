@@ -1,6 +1,7 @@
 package se.taekwondointernship.data.models.entity;
 
 import lombok.*;
+import net.bytebuddy.implementation.bind.annotation.Default;
 
 import javax.persistence.*;
 
@@ -29,7 +30,7 @@ public class Person {
 
     private String socialSecurityNumber;
 
-    private boolean permissionPhoto;
+    private boolean permissionPhoto = false;
     public String toStringSmall(){
         return "[Namn: " + firstName + " " + lastName +
                 ", Telefonnumner: " + phoneNumber +

@@ -2,8 +2,6 @@ package se.taekwondointernship.data.models.dto;
 
 import lombok.*;
 
-import java.util.List;
-
 @Getter
 @Setter
 @AllArgsConstructor
