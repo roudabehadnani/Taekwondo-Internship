@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @ToString
 public class PersonForm {
+
     @NotBlank(message = "Ditt förnamn kan inte vara tomt.")
     private String firstName;
 

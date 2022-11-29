@@ -1,6 +1,5 @@
 package se.taekwondointernship.data.service;
 
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonArrayFormatVisitor;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.modelmapper.ModelMapper;
@@ -10,16 +9,13 @@ import se.taekwondointernship.data.models.dto.PersonDto;
 import se.taekwondointernship.data.models.entity.Person;
 import se.taekwondointernship.data.models.form.PersonForm;
 import se.taekwondointernship.data.exceptions.ResourceNotFoundException;
-import se.taekwondointernship.data.repository.PassRepository;
 import se.taekwondointernship.data.repository.PersonRepository;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -27,13 +23,11 @@ import org.json.simple.JSONObject;
 @Service
 public class PersonServiceImpl implements PersonService{
     PersonRepository personRepository;
-    PassRepository passRepository;
     ModelMapper modelMapper;
     JSONArray memberList = new JSONArray();
     JSONParser jsonParser = new JSONParser();
-    public PersonServiceImpl(PersonRepository personRepository,PassRepository passRepository, ModelMapper modelMapper){
+    public PersonServiceImpl(PersonRepository personRepository, ModelMapper modelMapper){
         this.personRepository = personRepository;
-        this.passRepository = passRepository;
         this.modelMapper = modelMapper;
     }
     @Override
@@ -66,24 +60,23 @@ public class PersonServiceImpl implements PersonService{
     @Transactional(readOnly = true)
     public List<PersonDto> findAll() {
         List<Person> personList = new ArrayList<>();
+        List<PersonDto> personDtoList = new ArrayList<>();
         try (FileReader reader = new FileReader("members.json")) {
             Object obj = jsonParser.parse(reader);
-            JSONArray memberList = (JSONArray) obj;
-            System.out.println(memberList);
-            memberList.forEach(mbr -> parseJsonPerson( (JSONObject) mbr));
-            personList = memberList;
-        } catch (ParseException | IOException e){
+            JSONArray membersList = (JSONArray) obj;
+            membersList.forEach(mbr -> personList.add(parseJsonPerson( (JSONObject) mbr)));
+            System.out.println(personList);
+            personList.forEach((person -> personDtoList.add(modelMapper.map(person, PersonDto.class))));
+        } catch (IOException | ParseException e){
             e.printStackTrace();
         }
-        List<PersonDto> personDtoList = new ArrayList<>();
-        personList.forEach((person -> personDtoList.add(modelMapper.map(person, PersonDto.class))));
         return personDtoList;
     }
 
 
-    private void parseJsonPerson(JSONObject person){
-        JSONObject jsonPerson = (JSONObject) person.get("participant");
-        String personId = (String) jsonPerson.get("personId");
+    private Person parseJsonPerson(JSONObject objectPerson){
+        JSONObject jsonPerson = (JSONObject) objectPerson.get("participant");
+        Integer personId = Integer.parseInt(String.valueOf(jsonPerson.get("personId")));
         String firstName = (String) jsonPerson.get("firstName");
         String lastName = (String) jsonPerson.get("lastName");
         String phoneNumber = (String) jsonPerson.get("phoneNumber");
@@ -91,7 +84,8 @@ public class PersonServiceImpl implements PersonService{
         String socialSecurityNumber = (String) jsonPerson.get("socialSecurityNumber");
         String parentName = (String) jsonPerson.get("parentName");
         String parentNumber = (String) jsonPerson.get("parentNumber");
-        boolean permissionPhoto = (boolean) Boolean.parseBoolean(String.valueOf(jsonPerson.get("permissionPhoto")));
+        boolean permissionPhoto = Boolean.parseBoolean(String.valueOf(jsonPerson.get("permissionPhoto")));
+        return new Person(personId, firstName, lastName, phoneNumber, parentName, parentNumber, email, socialSecurityNumber, permissionPhoto);
     }
 
     @Override

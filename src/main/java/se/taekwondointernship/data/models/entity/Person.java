@@ -1,7 +1,6 @@
 package se.taekwondointernship.data.models.entity;
 
 import lombok.*;
-import net.bytebuddy.implementation.bind.annotation.Default;
 
 import javax.persistence.*;
 
@@ -31,6 +30,14 @@ public class Person {
     private String socialSecurityNumber;
 
     private boolean permissionPhoto = false;
+
+    private String jaOrNej(boolean permissionPhoto){
+        if (permissionPhoto){
+            return "Ja";
+        } else {
+            return "Nej";
+        }
+    }
     public String toStringSmall(){
         return "[Namn: " + firstName + " " + lastName +
                 ", Telefonnumner: " + phoneNumber +
@@ -42,9 +49,9 @@ public class Person {
         return "[Namn: " + firstName + " " + lastName + '\'' +
                 ", Telefonnummer: " + phoneNumber + '\'' +
                 ", Email: " + email + '\'' +
-                ", Kontaktpersons namn: " + phoneNumber + '\'' +
+                ", Kontaktpersons namn: " + parentName + '\'' +
                 ", Kontaktpersons telefonnummer: " + parentNumber + '\'' +
-                ", Tillåtelse för att fotograferas och synas på sociala medier: " + permissionPhoto +
+                ", Tillåtelse att fotograferas och synas på sociala medier: " + jaOrNej(permissionPhoto) +
                 "]";
     }
 }

@@ -20,5 +20,9 @@ public class PersonDto {
 
     private String socialSecurityNumber;
 
+    private String parentName;
+
+    private String parentNumber;
+
     private boolean permissionPhoto;
 }
