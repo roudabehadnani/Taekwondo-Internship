@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import se.taekwondointernship.data.models.dto.PersonDto;
 import se.taekwondointernship.data.models.entity.Person;
 import se.taekwondointernship.data.models.form.PersonForm;
-import se.taekwondointernship.data.exceptions.ResourceNotFoundException;
 import se.taekwondointernship.data.repository.PersonRepository;
 
 import java.io.FileReader;
@@ -93,20 +92,11 @@ public class PersonServiceImpl implements PersonService{
         boolean permissionPhoto = Boolean.parseBoolean(String.valueOf(jsonPerson.get("permissionPhoto")));
         return new Person(personId, firstName, lastName, phoneNumber, parentName, parentNumber, email, socialSecurityNumber,age, permissionPhoto);
     }
-
-    @Override
-    @Transactional(readOnly = true)
-    public PersonDto findByName(String firstName, String lastName) {
-        if (firstName == null && lastName == null) throw new IllegalArgumentException("Name can not be null");
-        Person foundByName = personRepository.findByName(firstName, lastName).orElseThrow(
-                () -> new ResourceNotFoundException("Participant can not be Found."));
-        return modelMapper.map(foundByName, PersonDto.class);
-    }
     public String setAge(String socialSecurityNumber){
         StringBuilder sb = new StringBuilder(socialSecurityNumber.substring(0,6));
         String socialNumberYear = socialSecurityNumber.substring(0,2);
         int socialNumberYearInt = Integer.parseInt(socialNumberYear);
-        if (socialNumberYearInt<22){
+        if (socialNumberYearInt<LocalDate.now().getYear()%100){
             sb.insert(0, "20");
         } else {
             sb.insert(0, "19");
