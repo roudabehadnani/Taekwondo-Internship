@@ -29,7 +29,22 @@ public class Person {
 
     private String socialSecurityNumber;
 
+    private String age;
+
     private boolean permissionPhoto = false;
+
+    public Person(Integer personId, String firstName, String lastName, String phoneNumber, String parentName,
+                  String parentNumber, String email, String socialSecurityNumber, boolean permissionPhoto){
+        this.personId = personId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.parentName = parentName;
+        this.parentNumber = parentNumber;
+        this.email = email;
+        this.socialSecurityNumber = socialSecurityNumber;
+        this.permissionPhoto = permissionPhoto;
+    }
 
     private String jaOrNej(boolean permissionPhoto){
         if (permissionPhoto){
@@ -48,6 +63,7 @@ public class Person {
     public String toString(){
         return "[Namn: " + firstName + " " + lastName + '\'' +
                 ", Telefonnummer: " + phoneNumber + '\'' +
+                ", Ålder: " + age + '\'' +
                 ", Email: " + email + '\'' +
                 ", Kontaktpersons namn: " + parentName + '\'' +
                 ", Kontaktpersons telefonnummer: " + parentNumber + '\'' +

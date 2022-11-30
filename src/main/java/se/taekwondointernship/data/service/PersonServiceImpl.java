@@ -14,6 +14,8 @@ import se.taekwondointernship.data.repository.PersonRepository;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +36,8 @@ public class PersonServiceImpl implements PersonService{
     @Transactional
     public PersonDto create(PersonForm form) {
         Person person = personRepository.save(modelMapper.map(form, Person.class));
+        String age = setAge(person.getSocialSecurityNumber());
+        System.out.println(age);
         JSONObject jsonPersonDetails = new JSONObject();
         jsonPersonDetails.put("personId", person.getPersonId());
         jsonPersonDetails.put("firstName", person.getFirstName());
@@ -41,6 +45,7 @@ public class PersonServiceImpl implements PersonService{
         jsonPersonDetails.put("phoneNumber", person.getPhoneNumber());
         jsonPersonDetails.put("email", person.getEmail());
         jsonPersonDetails.put("socialSecurityNumber", person.getSocialSecurityNumber());
+        jsonPersonDetails.put("age", age);
         jsonPersonDetails.put("parentName", person.getParentName());
         jsonPersonDetails.put("parentNumber", person.getParentNumber());
         jsonPersonDetails.put("permissionPhoto", person.isPermissionPhoto());
@@ -82,10 +87,11 @@ public class PersonServiceImpl implements PersonService{
         String phoneNumber = (String) jsonPerson.get("phoneNumber");
         String email = (String) jsonPerson.get("email");
         String socialSecurityNumber = (String) jsonPerson.get("socialSecurityNumber");
+        String age = (String) jsonPerson.get("age");
         String parentName = (String) jsonPerson.get("parentName");
         String parentNumber = (String) jsonPerson.get("parentNumber");
         boolean permissionPhoto = Boolean.parseBoolean(String.valueOf(jsonPerson.get("permissionPhoto")));
-        return new Person(personId, firstName, lastName, phoneNumber, parentName, parentNumber, email, socialSecurityNumber, permissionPhoto);
+        return new Person(personId, firstName, lastName, phoneNumber, parentName, parentNumber, email, socialSecurityNumber,age, permissionPhoto);
     }
 
     @Override
@@ -95,5 +101,18 @@ public class PersonServiceImpl implements PersonService{
         Person foundByName = personRepository.findByName(firstName, lastName).orElseThrow(
                 () -> new ResourceNotFoundException("Participant can not be Found."));
         return modelMapper.map(foundByName, PersonDto.class);
+    }
+    public String setAge(String socialSecurityNumber){
+        StringBuilder sb = new StringBuilder(socialSecurityNumber.substring(0,6));
+        String socialNumberYear = socialSecurityNumber.substring(0,2);
+        int socialNumberYearInt = Integer.parseInt(socialNumberYear);
+        if (socialNumberYearInt<22){
+            sb.insert(0, "20");
+        } else {
+            sb.insert(0, "19");
+        }
+        sb.insert(4, "-");
+        sb.insert(7, "-");
+        return String.valueOf(Period.between(LocalDate.parse(sb.toString()), LocalDate.now()).getYears());
     }
 }
