@@ -27,6 +27,4 @@ public class PersonController {
     public ResponseEntity<List<PersonDto>> findAll(){
        return ResponseEntity.ok(personService.findAll());
     }
-//    @GetMapping("/search/{names}")
-//    public ResponseEntity<PersonDto> findByPersonName(@RequestBody)
 }

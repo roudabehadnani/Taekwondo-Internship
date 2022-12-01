@@ -68,8 +68,7 @@ public class PersonServiceImpl implements PersonService{
         try (FileReader reader = new FileReader("members.json")) {
             Object obj = jsonParser.parse(reader);
             JSONArray membersList = (JSONArray) obj;
-            membersList.forEach(mbr -> personList.add(parseJsonPerson( (JSONObject) mbr)));
-            System.out.println(personList);
+            membersList.forEach(mbr -> personList.add(parseJsonPerson((JSONObject) mbr)));
             personList.forEach((person -> personDtoList.add(modelMapper.map(person, PersonDto.class))));
         } catch (IOException | ParseException e){
             e.printStackTrace();
@@ -95,8 +94,8 @@ public class PersonServiceImpl implements PersonService{
     public String setAge(String socialSecurityNumber){
         StringBuilder sb = new StringBuilder(socialSecurityNumber.substring(0,6));
         String socialNumberYear = socialSecurityNumber.substring(0,2);
-        int socialNumberYearInt = Integer.parseInt(socialNumberYear);
-        if (socialNumberYearInt<LocalDate.now().getYear()%100){
+        int socialNumberYearCheck = Integer.parseInt(socialNumberYear);
+        if (socialNumberYearCheck<LocalDate.now().getYear()%100){
             sb.insert(0, "20");
         } else {
             sb.insert(0, "19");
