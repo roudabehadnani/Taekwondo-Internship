@@ -26,7 +26,7 @@ public class AdminController {
     }
     @PutMapping("/{oldPassword}")
     public ResponseEntity<?> edit(@RequestBody AdminForm form, @PathVariable String oldPassword){
-        if (oldPassword.equals(adminService.getOldPassword())){
+        if (oldPassword.equals(adminService.getPassword())){
             try {
                 return ResponseEntity.ok(adminService.editPassword(form));
             } catch (IOException | ParseException e) {
@@ -35,5 +35,18 @@ public class AdminController {
         } else {
             return ResponseEntity.status(403).body("Det nuvarande lösenordet är fel. Om du inte är behörig, var god och låt bli admin.");
         }
+    }
+    @PutMapping("/login/{username}/{password}")
+    public ResponseEntity<?> logIn(@PathVariable String username, @PathVariable String password){
+        if (username.equals(adminService.getUsername()) && password.equals(adminService.getPassword())){
+            return ResponseEntity.ok(adminService.logIn());
+        } else {
+            return ResponseEntity.status(403).body("Användarnamnet och/eller lösenordet är fel. Om du inte är behörig, var god och låt bli admin.");
+        }
+    }
+
+    @PutMapping("/logout")
+    public ResponseEntity<?> logOut(){
+        return ResponseEntity.ok(adminService.logOut());
     }
 }

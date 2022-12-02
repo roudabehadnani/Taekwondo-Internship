@@ -11,5 +11,11 @@ public interface AdminService {
 
     AdminDto editPassword(AdminForm form) throws IOException, ParseException;
 
-    String getOldPassword();
+    String getPassword();
+
+    String getUsername();
+
+    AdminDto logIn();
+
+    AdminDto logOut();
 }

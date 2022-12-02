@@ -2,6 +2,7 @@ package se.taekwondointernship.data.service;
 
 import org.json.JSONException;
 import org.json.simple.JSONObject;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import se.taekwondointernship.data.models.entity.Admin;
@@ -53,5 +54,20 @@ class AdminServiceImplTest {
         } catch (JSONException e){
             throw new RuntimeException(e);
         }
+    }
+    @Test
+    void logIn(){
+        Admin admin = new Admin(1, "Bamse", "Långben");
+        Assertions.assertFalse(admin.isLoggedIn());
+        admin.setLoggedIn(true);
+        Assertions.assertTrue(admin.isLoggedIn());
+    }
+
+    @Test
+    void logOut(){
+        Admin admin = new Admin(1, "Bamse", "Långben", true);
+        Assertions.assertTrue(admin.isLoggedIn());
+        admin.setLoggedIn(false);
+        Assertions.assertFalse(admin.isLoggedIn());
     }
 }

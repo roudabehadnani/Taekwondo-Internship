@@ -65,7 +65,7 @@ public class AdminServiceImpl implements AdminService{
         }
     }
     @Transactional(readOnly = true)
-    public String getOldPassword(){
+    public String getPassword(){
         try {
             List<Admin> adminList = getFromExistingAdminJSON();
             return adminList.get(0).getPassword();
@@ -73,6 +73,39 @@ public class AdminServiceImpl implements AdminService{
             throw new RuntimeException(e);
         }
 
+    }
+
+    @Transactional(readOnly = true)
+    public String getUsername(){
+        try {
+            List<Admin> adminList = getFromExistingAdminJSON();
+            return adminList.get(0).getUsername();
+        } catch (IOException | ParseException e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    public AdminDto logIn(){
+        try {
+            List<Admin> adminList = getFromExistingAdminJSON();
+            Admin admin = adminList.get(0);
+            admin.setLoggedIn(true);
+            extractAdmin(admin);
+            return modelMapper.map(admin, AdminDto.class);
+        } catch (IOException | ParseException e){
+            throw new RuntimeException(e);
+        }
+    }
+    public AdminDto logOut(){
+        try {
+            List<Admin> adminList = getFromExistingAdminJSON();
+            Admin admin = adminList.get(0);
+            admin.setLoggedIn(false);
+            extractAdmin(admin);
+            return modelMapper.map(admin, AdminDto.class);
+        } catch (IOException | ParseException e){
+            throw new RuntimeException(e);
+        }
     }
 
     private List<Admin> getFromExistingAdminJSON() throws IOException, ParseException {

@@ -21,9 +21,16 @@ public class Admin {
     private Integer id;
     private String username;
     private String password;
+    private boolean isLoggedIn = false;
+
+    public Admin(Integer id, String username, String password){
+        this.id = id;
+        this.username = username;
+        this.password = password;
+    }
 
     @Override
     public String toString() {
-        return "Användarnamn: " + username + "\nLösenord: Om du inte vet lösenordet har du nog inte behörighet till Admin.";
+        return "Användarnamn: " + username + "\nLösenord: Om du inte vet lösenordet har du nog inte behörighet till admin.";
     }
 }
