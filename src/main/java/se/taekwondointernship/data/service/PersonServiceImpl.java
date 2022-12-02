@@ -36,7 +36,6 @@ public class PersonServiceImpl implements PersonService{
     public PersonDto create(PersonForm form) {
         Person person = personRepository.save(modelMapper.map(form, Person.class));
         String age = setAge(person.getSocialSecurityNumber());
-        System.out.println(age);
         JSONObject jsonPersonDetails = new JSONObject();
         jsonPersonDetails.put("personId", person.getPersonId());
         jsonPersonDetails.put("firstName", person.getFirstName());
@@ -91,6 +90,7 @@ public class PersonServiceImpl implements PersonService{
         boolean permissionPhoto = Boolean.parseBoolean(String.valueOf(jsonPerson.get("permissionPhoto")));
         return new Person(personId, firstName, lastName, phoneNumber, parentName, parentNumber, email, socialSecurityNumber,age, permissionPhoto);
     }
+    @Transactional
     public String setAge(String socialSecurityNumber){
         StringBuilder sb = new StringBuilder(socialSecurityNumber.substring(0,6));
         String socialNumberYear = socialSecurityNumber.substring(0,2);

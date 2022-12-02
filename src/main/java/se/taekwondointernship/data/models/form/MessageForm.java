@@ -10,6 +10,6 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @ToString
 public class MessageForm {
-    @NotBlank(message = "Meddelandet för nyregestrerade kan inte vara blankt.")
+    @NotBlank(message = "Meddelandet för nyregistrerade kan inte vara blankt.")
     private String messageContent;
 }

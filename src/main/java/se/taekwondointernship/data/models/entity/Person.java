@@ -3,12 +3,12 @@ package se.taekwondointernship.data.models.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
 @Entity
 public class Person {
     @Id
@@ -53,6 +53,20 @@ public class Person {
             return "Nej";
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return Objects.equals(socialSecurityNumber, person.socialSecurityNumber);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(socialSecurityNumber);
+    }
+
     public String toStringSmall(){
         return "[Namn: " + firstName + " " + lastName +
                 ", Telefonnumner: " + phoneNumber +
