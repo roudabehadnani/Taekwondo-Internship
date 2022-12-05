@@ -16,13 +16,22 @@ public class MessageController {
     public MessageController(MessageService personService){
         this.messageService = personService;
     }
-    @PostMapping
-    public ResponseEntity<Message> create(@RequestBody MessageForm form){
+    @PostMapping(path = "/welcome")
+    public ResponseEntity<Message> createWelcome(@RequestBody MessageForm form){
         System.out.println("### In Create Method ###");
-        return ResponseEntity.status(HttpStatus.CREATED).body(messageService.create(form));
+        return ResponseEntity.status(HttpStatus.CREATED).body(messageService.createWelcome(form));
     }
-    @PutMapping
-    public ResponseEntity<Message> edit(@RequestBody MessageForm form){
-        return ResponseEntity.ok(messageService.edit(form));
+    @PutMapping(path = "/welcome")
+    public ResponseEntity<Message> editWelcome(@RequestBody MessageForm form){
+        return ResponseEntity.ok(messageService.editWelcome(form));
+    }
+    @PostMapping(path = "/news")
+    public ResponseEntity<Message> createNews(@RequestBody MessageForm form){
+        System.out.println("### In Create Method ###");
+        return ResponseEntity.status(HttpStatus.CREATED).body(messageService.createNews(form));
+    }
+    @PutMapping(path = "/news")
+    public ResponseEntity<Message> editNews(@RequestBody MessageForm form){
+        return ResponseEntity.ok(messageService.editNews(form));
     }
 }

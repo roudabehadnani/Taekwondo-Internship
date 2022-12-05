@@ -22,25 +22,54 @@ public class MessageServiceImpl implements MessageService{
 
     @Override
     @Transactional
-    public Message create(MessageForm form) {
+    public Message createWelcome(MessageForm form) {
         Message message = repository.save(modelMapper.map(form, Message.class));
-        return extractMessage(message);
+        return extractWelcomeMessage(message);
     }
     @Override
     @Transactional
-    public Message edit(MessageForm form){
+    public Message editWelcome(MessageForm form){
         Message message = modelMapper.map(form, Message.class);
         message.setMessageId(1);
-        return extractMessage(message);
+        return extractWelcomeMessage(message);
     }
 
-    private Message extractMessage(Message message) {
+    private Message extractWelcomeMessage(Message message) {
         JSONObject jsonMessageDetails = new JSONObject();
         jsonMessageDetails.put("messageId", message.getMessageId());
         jsonMessageDetails.put("messageContent", message.getMessageContent());
         JSONObject jsonMessage = new JSONObject();
         jsonMessage.put("message", jsonMessageDetails);
-        try (FileWriter file = new FileWriter("message.json")){
+        try (FileWriter file = new FileWriter("welcomeMessage.json")){
+            file.write(jsonMessage.toJSONString());
+            file.flush();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+        return message;
+    }
+    @Override
+    @Transactional
+    public Message createNews(MessageForm form){
+        Message message = repository.save(modelMapper.map(form, Message.class));
+        return extractNewsMessage(message);
+    }
+
+    @Override
+    @Transactional
+    public Message editNews(MessageForm form){
+        Message message = modelMapper.map(form, Message.class);
+        message.setMessageId(1);
+        return extractNewsMessage(message);
+    }
+
+    private Message extractNewsMessage(Message message){
+        JSONObject jsonMessageDetails = new JSONObject();
+        jsonMessageDetails.put("messageId", message.getMessageId());
+        jsonMessageDetails.put("messageContent", message.getMessageContent());
+        JSONObject jsonMessage = new JSONObject();
+        jsonMessage.put("message", jsonMessageDetails);
+        try (FileWriter file = new FileWriter("newsMessage.json")){
             file.write(jsonMessage.toJSONString());
             file.flush();
         } catch (IOException e){
