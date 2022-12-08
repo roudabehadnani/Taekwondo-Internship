@@ -19,19 +19,27 @@ public class MessageController {
     @PostMapping(path = "/welcome")
     public ResponseEntity<Message> createWelcome(@RequestBody MessageForm form){
         System.out.println("### In Create Method ###");
-        return ResponseEntity.status(HttpStatus.CREATED).body(messageService.createWelcome(form));
+        return ResponseEntity.status(HttpStatus.CREATED).body(messageService.create(form, "welcomeMessage.json"));
     }
     @PutMapping(path = "/welcome")
     public ResponseEntity<Message> editWelcome(@RequestBody MessageForm form){
-        return ResponseEntity.ok(messageService.editWelcome(form));
+        return ResponseEntity.ok(messageService.edit(form, "welcomeMessage.json"));
     }
     @PostMapping(path = "/news")
     public ResponseEntity<Message> createNews(@RequestBody MessageForm form){
         System.out.println("### In Create Method ###");
-        return ResponseEntity.status(HttpStatus.CREATED).body(messageService.createNews(form));
+        return ResponseEntity.status(HttpStatus.CREATED).body(messageService.create(form, "newsMessage.json"));
     }
     @PutMapping(path = "/news")
     public ResponseEntity<Message> editNews(@RequestBody MessageForm form){
-        return ResponseEntity.ok(messageService.editNews(form));
+        return ResponseEntity.ok(messageService.edit(form, "newsMessage.json"));
+    }
+    @PostMapping(path = "/email")
+    public ResponseEntity<Message> createMail(@RequestBody MessageForm form){
+        return ResponseEntity.status(HttpStatus.CREATED).body(messageService.create(form, "emailMessage.json"));
+    }
+    @PutMapping(path = "/email")
+    public ResponseEntity<Message> editMail(@RequestBody MessageForm form){
+        return ResponseEntity.ok(messageService.edit(form, "emailMessage.json"));
     }
 }

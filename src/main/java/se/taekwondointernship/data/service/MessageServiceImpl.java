@@ -2,6 +2,7 @@ package se.taekwondointernship.data.service;
 
 import org.json.simple.JSONObject;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import se.taekwondointernship.data.models.entity.Message;
@@ -15,6 +16,7 @@ import java.io.IOException;
 public class MessageServiceImpl implements MessageService{
     MessageRepository repository;
     ModelMapper modelMapper;
+    @Autowired
     public MessageServiceImpl(MessageRepository repository, ModelMapper modelMapper){
         this.repository = repository;
         this.modelMapper = modelMapper;
@@ -22,54 +24,26 @@ public class MessageServiceImpl implements MessageService{
 
     @Override
     @Transactional
-    public Message createWelcome(MessageForm form) {
+    public Message create(MessageForm form, String url){
         Message message = repository.save(modelMapper.map(form, Message.class));
-        return extractWelcomeMessage(message);
-    }
-    @Override
-    @Transactional
-    public Message editWelcome(MessageForm form){
-        Message message = modelMapper.map(form, Message.class);
-        message.setMessageId(1);
-        return extractWelcomeMessage(message);
+        return extractMessage(message, url);
     }
 
-    private Message extractWelcomeMessage(Message message) {
+    @Override
+    @Transactional
+    public Message edit(MessageForm form, String url){
+        Message message = modelMapper.map(form, Message.class);
+        message.setMessageId(1);
+        return extractMessage(message, url);
+    }
+
+    private Message extractMessage(Message message, String url){
         JSONObject jsonMessageDetails = new JSONObject();
         jsonMessageDetails.put("messageId", message.getMessageId());
         jsonMessageDetails.put("messageContent", message.getMessageContent());
         JSONObject jsonMessage = new JSONObject();
         jsonMessage.put("message", jsonMessageDetails);
-        try (FileWriter file = new FileWriter("welcomeMessage.json")){
-            file.write(jsonMessage.toJSONString());
-            file.flush();
-        } catch (IOException e){
-            e.printStackTrace();
-        }
-        return message;
-    }
-    @Override
-    @Transactional
-    public Message createNews(MessageForm form){
-        Message message = repository.save(modelMapper.map(form, Message.class));
-        return extractNewsMessage(message);
-    }
-
-    @Override
-    @Transactional
-    public Message editNews(MessageForm form){
-        Message message = modelMapper.map(form, Message.class);
-        message.setMessageId(1);
-        return extractNewsMessage(message);
-    }
-
-    private Message extractNewsMessage(Message message){
-        JSONObject jsonMessageDetails = new JSONObject();
-        jsonMessageDetails.put("messageId", message.getMessageId());
-        jsonMessageDetails.put("messageContent", message.getMessageContent());
-        JSONObject jsonMessage = new JSONObject();
-        jsonMessage.put("message", jsonMessageDetails);
-        try (FileWriter file = new FileWriter("newsMessage.json")){
+        try (FileWriter file = new FileWriter(url)){
             file.write(jsonMessage.toJSONString());
             file.flush();
         } catch (IOException e){

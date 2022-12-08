@@ -25,6 +25,12 @@ public class PersonController {
     }
     @GetMapping
     public ResponseEntity<List<PersonDto>> findAll(){
-       return ResponseEntity.ok(personService.findAll());
+        return ResponseEntity.ok(personService.findAll());
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete(@PathVariable Integer id){
+        System.out.println("### Deleting Method ###");
+        personService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

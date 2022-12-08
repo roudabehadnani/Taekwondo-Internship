@@ -8,4 +8,5 @@ import java.util.List;
 public interface PersonService {
     PersonDto create(PersonForm form);
     List<PersonDto> findAll();
+    void delete(Integer id);
 }

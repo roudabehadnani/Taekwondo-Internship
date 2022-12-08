@@ -25,8 +25,9 @@ import org.json.simple.JSONObject;
 public class PersonServiceImpl implements PersonService{
     PersonRepository personRepository;
     ModelMapper modelMapper;
-    JSONArray memberList = new JSONArray();
     JSONParser jsonParser = new JSONParser();
+
+    JSONArray memberList = new JSONArray();
     public PersonServiceImpl(PersonRepository personRepository, ModelMapper modelMapper){
         this.personRepository = personRepository;
         this.modelMapper = modelMapper;
@@ -35,27 +36,8 @@ public class PersonServiceImpl implements PersonService{
     @Transactional
     public PersonDto create(PersonForm form) {
         Person person = personRepository.save(modelMapper.map(form, Person.class));
-        String age = setAge(person.getSocialSecurityNumber());
-        JSONObject jsonPersonDetails = new JSONObject();
-        jsonPersonDetails.put("personId", person.getPersonId());
-        jsonPersonDetails.put("firstName", person.getFirstName());
-        jsonPersonDetails.put("lastName", person.getLastName());
-        jsonPersonDetails.put("phoneNumber", person.getPhoneNumber());
-        jsonPersonDetails.put("email", person.getEmail());
-        jsonPersonDetails.put("socialSecurityNumber", person.getSocialSecurityNumber());
-        jsonPersonDetails.put("age", age);
-        jsonPersonDetails.put("parentName", person.getParentName());
-        jsonPersonDetails.put("parentNumber", person.getParentNumber());
-        jsonPersonDetails.put("permissionPhoto", person.isPermissionPhoto());
-        JSONObject jsonPerson = new JSONObject();
-        jsonPerson.put("participant", jsonPersonDetails);
-        memberList.add(jsonPerson);
-        try (FileWriter file = new FileWriter("members.json")){
-            file.write(memberList.toJSONString());
-            file.flush();
-        } catch (IOException e){
-            e.printStackTrace();
-        }
+        memberList.add(parsePerson(person));
+        printJSON(memberList);
         return modelMapper.map(person, PersonDto.class);
     }
 
@@ -75,6 +57,24 @@ public class PersonServiceImpl implements PersonService{
         return personDtoList;
     }
 
+    @Override
+    @Transactional
+    public void delete(Integer id){
+        List<Person> personList = new ArrayList<>();
+        try(FileReader reader = new FileReader("members.json")) {
+            Object obj = jsonParser.parse(reader);
+            memberList = (JSONArray) obj;
+            memberList.forEach(mbr -> personList.add(parseJsonPerson((JSONObject) mbr)));
+            memberList.clear();
+            printJSON(memberList);
+            personList.removeIf(person -> person.getPersonId().equals(id));
+            personList.forEach(mbr -> memberList.add(parsePerson(mbr)));
+            printJSON(memberList);
+        } catch (IOException | ParseException e){
+            e.printStackTrace();
+        }
+    }
+
 
     private Person parseJsonPerson(JSONObject objectPerson){
         JSONObject jsonPerson = (JSONObject) objectPerson.get("participant");
@@ -89,6 +89,31 @@ public class PersonServiceImpl implements PersonService{
         String parentNumber = (String) jsonPerson.get("parentNumber");
         boolean permissionPhoto = Boolean.parseBoolean(String.valueOf(jsonPerson.get("permissionPhoto")));
         return new Person(personId, firstName, lastName, phoneNumber, parentName, parentNumber, email, socialSecurityNumber,age, permissionPhoto);
+    }
+    private JSONObject parsePerson(Person person){
+        JSONObject jsonPersonDetails = new JSONObject();
+        String age = setAge(person.getSocialSecurityNumber());
+        jsonPersonDetails.put("personId", person.getPersonId());
+        jsonPersonDetails.put("firstName", person.getFirstName());
+        jsonPersonDetails.put("lastName", person.getLastName());
+        jsonPersonDetails.put("phoneNumber", person.getPhoneNumber());
+        jsonPersonDetails.put("email", person.getEmail());
+        jsonPersonDetails.put("socialSecurityNumber", person.getSocialSecurityNumber());
+        jsonPersonDetails.put("age", age);
+        jsonPersonDetails.put("parentName", person.getParentName());
+        jsonPersonDetails.put("parentNumber", person.getParentNumber());
+        jsonPersonDetails.put("permissionPhoto", person.isPermissionPhoto());
+        JSONObject jsonPerson = new JSONObject();
+        jsonPerson.put("participant", jsonPersonDetails);
+        return jsonPerson;
+    }
+    private void printJSON(JSONArray jsonArray){
+        try (FileWriter file = new FileWriter("members.json")){
+            file.write(jsonArray.toJSONString());
+            file.flush();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
     }
     @Transactional
     public String setAge(String socialSecurityNumber){
