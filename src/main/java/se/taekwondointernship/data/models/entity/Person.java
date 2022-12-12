@@ -14,27 +14,20 @@ public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer personId;
-
     private String firstName;
-
     private String lastName;
-
     private String phoneNumber;
-
     private String parentName;
-
     private String parentNumber;
-
     private String email;
-
     private String socialSecurityNumber;
-
     private String age;
-
     private boolean permissionPhoto = false;
+    private Integer passCount = 0;
+    private boolean locked = false;
 
     public Person(Integer personId, String firstName, String lastName, String phoneNumber, String parentName,
-                  String parentNumber, String email, String socialSecurityNumber, boolean permissionPhoto){
+                  String parentNumber, String email,  String socialSecurityNumber, String age, boolean permissionPhoto){
         this.personId = personId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -43,6 +36,7 @@ public class Person {
         this.parentNumber = parentNumber;
         this.email = email;
         this.socialSecurityNumber = socialSecurityNumber;
+        this.age = age;
         this.permissionPhoto = permissionPhoto;
     }
 
@@ -51,6 +45,13 @@ public class Person {
             return "Ja";
         } else {
             return "Nej";
+        }
+    }
+
+    private void increasePassCount(){
+        this.passCount++;
+        if (passCount == 3){
+            setLocked(true);
         }
     }
 
@@ -67,12 +68,6 @@ public class Person {
         return Objects.hash(socialSecurityNumber);
     }
 
-    public String toStringSmall(){
-        return "[Namn: " + firstName + " " + lastName +
-                ", Telefonnumner: " + phoneNumber +
-                '\'' + ", Kontaktpersons namn: " + parentName +
-                ", Kontaktpersons telefonnummer: " + parentNumber + "]";
-    }
     @Override
     public String toString(){
         return "[Namn: " + firstName + " " + lastName + '\'' +
