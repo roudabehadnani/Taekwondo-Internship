@@ -41,7 +41,7 @@ public class PersonServiceImpl implements PersonService{
     public PersonDto create(PersonForm form) {
         Person person = personRepository.save(modelMapper.map(form, Person.class));
         memberList.add(parsePerson(person));
-//        emailService.sending(person.getEmail(), "testAttachment.txt");
+        emailService.sending(person.getEmail(), "testAttachment.txt");
         printJSON(memberList);
         return modelMapper.map(person, PersonDto.class);
     }
