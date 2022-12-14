@@ -124,6 +124,7 @@ public class EmailServiceImpl implements EmailService{
         jsonEmailDetails.put("sender", email.getSender());
         jsonEmailDetails.put("password", email.getPassword());
         jsonEmailDetails.put("senderName", email.getSenderName());
+        jsonEmailDetails.put("subject", email.getSubject());
         return jsonEmailDetails;
     }
 
@@ -149,6 +150,10 @@ public class EmailServiceImpl implements EmailService{
     public void sending(String recipient, String url) {
         try {
             Email email = getFromExistingEmailJSON().get(0);
+            String a = getFromExistingEmailJSON().get(0).getSenderName();
+            String b = getFromExistingEmailJSON().get(0).getPassword();
+            System.out.println(a);
+            System.out.println(b);
 
             MimeMessage msg = new MimeMessage(setUpEmail());
             msg.addHeader("Content-type", "text/HTML; charset=UTF-8");
@@ -226,6 +231,6 @@ public class EmailServiceImpl implements EmailService{
         String password = (String) objectEmail.get("password");
         String senderName = (String) objectEmail.get("senderName");
         String subject = (String) objectEmail.get("subject");
-        return new Email(id, sender, password, senderName, subject);
+        return new Email(id, sender, senderName, subject, password);
     }
 }

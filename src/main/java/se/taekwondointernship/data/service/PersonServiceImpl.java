@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -80,9 +81,28 @@ public class PersonServiceImpl implements PersonService{
         }
     }
 
+    @Override
+    @Transactional
+    public PersonDto findById(Integer id) {
+        List<Person> personList = new ArrayList<>();
+        Person person = new Person();
+        try (FileReader reader = new FileReader("members.json")) {
+            Object obj = jsonParser.parse(reader);
+            JSONArray membersList = (JSONArray) obj;
+            membersList.forEach(mbr -> personList.add(parseJsonPerson((JSONObject) mbr)));
+            for (Person value : personList) {
+                if (Objects.equals(value.getPersonId(), id)) {
+                    person = value;
+                }
+            }
+        } catch (IOException | ParseException e){
+            e.printStackTrace();
+        }
+        return modelMapper.map(person, PersonDto.class);
+    }
+
 
     private Person parseJsonPerson(JSONObject objectPerson){
-//        JSONObject jsonPerson = (JSONObject) objectPerson.get("participant");
         Integer personId = Integer.parseInt(String.valueOf(objectPerson.get("personId")));
         String firstName = (String) objectPerson.get("firstName");
         String lastName = (String) objectPerson.get("lastName");
@@ -112,8 +132,6 @@ public class PersonServiceImpl implements PersonService{
         jsonPersonDetails.put("permissionPhoto", person.isPermissionPhoto());
         jsonPersonDetails.put("passCount", person.getPassCount());
         jsonPersonDetails.put("locked", person.isLocked());
-//        JSONObject jsonPerson = new JSONObject();
-//        jsonPerson.put("participant", jsonPersonDetails);
         return jsonPersonDetails;
     }
     private void printJSON(JSONArray jsonArray){

@@ -10,7 +10,7 @@ import lombok.*;
 public class EmailDto {
     private Integer id;
     private String sender;
-    private String password;
     private String senderName;
     private String subject;
+    private String password;
 }
