@@ -21,6 +21,7 @@ public class Email {
     private String senderName;
     private String subject;
     private String password;
+    private String attachURL;
 
     @Override
     public String toString(){

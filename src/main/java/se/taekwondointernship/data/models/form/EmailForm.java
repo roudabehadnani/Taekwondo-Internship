@@ -18,4 +18,5 @@ public class EmailForm {
     private String password;
     private String senderName;
     private String subject;
+    private String attachURL;
 }

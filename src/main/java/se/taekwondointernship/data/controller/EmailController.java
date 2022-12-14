@@ -22,19 +22,23 @@ public class EmailController {
         return ResponseEntity.status(HttpStatus.CREATED).body(emailService.create(form));
     }
     @PutMapping("/sender")
-    public ResponseEntity<EmailDto> editSender(@RequestBody EmailForm form){
-        return ResponseEntity.ok(emailService.editSender(form));
+    public ResponseEntity<EmailDto> editSender(@RequestBody String sender){
+        return ResponseEntity.ok(emailService.editSender(sender));
     }
     @PutMapping("/password")
-    public ResponseEntity<EmailDto> editPassword(@RequestBody EmailForm form){
-        return ResponseEntity.ok(emailService.editPassword(form));
+    public ResponseEntity<EmailDto> editPassword(@RequestBody String password){
+        return ResponseEntity.ok(emailService.editPassword(password));
     }
     @PutMapping("/name")
-    public ResponseEntity<EmailDto> editSenderName(@RequestBody EmailForm form){
-        return ResponseEntity.ok(emailService.editSenderName(form));
+    public ResponseEntity<EmailDto> editSenderName(@RequestBody String name){
+        return ResponseEntity.ok(emailService.editSenderName(name));
+    }
+    @PutMapping("/attachURL")
+    public ResponseEntity<EmailDto> editAttachURL(@RequestBody String attachURL){
+        return ResponseEntity.ok(emailService.editAttachURL(attachURL));
     }
     @PutMapping("/subject")
-    public ResponseEntity<EmailDto> editSubject(@RequestBody EmailForm form){
-        return ResponseEntity.ok(emailService.editSubject(form));
+    public ResponseEntity<EmailDto> editSubject(@RequestBody String subject){
+        return ResponseEntity.ok(emailService.editSubject(subject));
     }
 }

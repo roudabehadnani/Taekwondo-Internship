@@ -52,14 +52,10 @@ public class EmailServiceImpl implements EmailService{
 
     @Override
     @Transactional
-    public EmailDto editSender(EmailForm form) {
+    public EmailDto editSender(String sender) {
         try {
-            List<Email> listOfEmailInfo = getFromExistingEmailJSON();
-            Email email = modelMapper.map(form, Email.class);
-            email.setPassword(listOfEmailInfo.get(0).getPassword());
-            email.setSubject(listOfEmailInfo.get(0).getSubject());
-            email.setId(1);
-            email.setSenderName(listOfEmailInfo.get(0).getSenderName());
+            Email email = getFromExistingEmailJSON().get(0);
+            email.setSender(sender);
             printEmail(extractEmailInfo(email));
             return modelMapper.map(email, EmailDto.class);
         } catch (IOException | ParseException e) {
@@ -69,14 +65,10 @@ public class EmailServiceImpl implements EmailService{
 
     @Override
     @Transactional
-    public EmailDto editPassword(EmailForm form) {
+    public EmailDto editPassword(String password) {
         try {
-            List<Email> listOfEmailInfo = getFromExistingEmailJSON();
-            Email email = modelMapper.map(form, Email.class);
-            email.setSender(listOfEmailInfo.get(0).getSender());
-            email.setSubject(listOfEmailInfo.get(0).getSubject());
-            email.setId(1);
-            email.setSenderName(listOfEmailInfo.get(0).getSenderName());
+            Email email = getFromExistingEmailJSON().get(0);
+            email.setPassword(password);
             printEmail(extractEmailInfo(email));
             return modelMapper.map(email, EmailDto.class);
         } catch (IOException | ParseException e) {
@@ -86,14 +78,10 @@ public class EmailServiceImpl implements EmailService{
 
     @Override
     @Transactional
-    public EmailDto editSenderName(EmailForm form){
+    public EmailDto editSenderName(String name){
         try {
-            List<Email> listOfEmailInfo = getFromExistingEmailJSON();
-            Email email = modelMapper.map(form, Email.class);
-            email.setSender(listOfEmailInfo.get(0).getSender());
-            email.setSubject(listOfEmailInfo.get(0).getSubject());
-            email.setId(1);
-            email.setPassword(listOfEmailInfo.get(0).getPassword());
+            Email email = getFromExistingEmailJSON().get(0);
+            email.setSenderName(name);
             printEmail(extractEmailInfo(email));
             return modelMapper.map(email, EmailDto.class);
         } catch (IOException | ParseException e) {
@@ -103,14 +91,23 @@ public class EmailServiceImpl implements EmailService{
 
     @Override
     @Transactional
-    public EmailDto editSubject(EmailForm form){
+    public EmailDto editSubject(String subject){
         try {
-            List<Email> listOfEmailInfo = getFromExistingEmailJSON();
-            Email email = modelMapper.map(form, Email.class);
-            email.setSender(listOfEmailInfo.get(0).getSender());
-            email.setSenderName(listOfEmailInfo.get(0).getSenderName());
-            email.setId(1);
-            email.setPassword(listOfEmailInfo.get(0).getPassword());
+            Email email = getFromExistingEmailJSON().get(0);
+            email.setSubject(subject);
+            printEmail(extractEmailInfo(email));
+            return modelMapper.map(email, EmailDto.class);
+        } catch (IOException | ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public EmailDto editAttachURL(String attachURL){
+        try {
+            Email email = getFromExistingEmailJSON().get(0);
+            email.setAttachURL(attachURL);
             printEmail(extractEmailInfo(email));
             return modelMapper.map(email, EmailDto.class);
         } catch (IOException | ParseException e) {
@@ -125,6 +122,7 @@ public class EmailServiceImpl implements EmailService{
         jsonEmailDetails.put("password", email.getPassword());
         jsonEmailDetails.put("senderName", email.getSenderName());
         jsonEmailDetails.put("subject", email.getSubject());
+        jsonEmailDetails.put("attachURL", email.getAttachURL());
         return jsonEmailDetails;
     }
 
@@ -147,7 +145,7 @@ public class EmailServiceImpl implements EmailService{
 
     @Override
     @Transactional
-    public void sending(String recipient, String url) {
+    public void sending(String recipient) {
         try {
             Email email = getFromExistingEmailJSON().get(0);
             String a = getFromExistingEmailJSON().get(0).getSenderName();
@@ -155,7 +153,7 @@ public class EmailServiceImpl implements EmailService{
             System.out.println(a);
             System.out.println(b);
 
-            MimeMessage msg = new MimeMessage(setUpEmail());
+            MimeMessage msg = new MimeMessage(setUpSession());
             msg.addHeader("Content-type", "text/HTML; charset=UTF-8");
             msg.addHeader("format", "flowed");
             msg.addHeader("Content-Transfer-Encoding", "8bit");
@@ -169,14 +167,14 @@ public class EmailServiceImpl implements EmailService{
             messageBodyPart.setText(messageService.findMessage("emailMessage.json").getMessageContent());
             Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(messageBodyPart);
-
-            messageBodyPart = new MimeBodyPart();
-            DataSource source = new FileDataSource(url);
-            messageBodyPart.setDataHandler(new DataHandler(source));
-            messageBodyPart.setFileName(url);
-            multipart.addBodyPart(messageBodyPart);
-
-            msg.setContent(multipart);
+            if (!email.getAttachURL().equals("") || email.getAttachURL() != null){
+                messageBodyPart = new MimeBodyPart();
+                DataSource source = new FileDataSource(email.getAttachURL());
+                messageBodyPart.setDataHandler(new DataHandler(source));
+                messageBodyPart.setFileName(email.getAttachURL());
+                multipart.addBodyPart(messageBodyPart);
+                msg.setContent(multipart);
+            }
             Transport.send(msg);
             System.out.println("Email Sent Successfully with attachment!");
         } catch (MessagingException | IOException | ParseException e) {
@@ -184,7 +182,7 @@ public class EmailServiceImpl implements EmailService{
         }
     }
 
-    private Session setUpEmail() {
+    private Session setUpSession() {
         try {
             Email email = getFromExistingEmailJSON().get(0);
             Properties properties = new Properties();
@@ -231,6 +229,7 @@ public class EmailServiceImpl implements EmailService{
         String password = (String) objectEmail.get("password");
         String senderName = (String) objectEmail.get("senderName");
         String subject = (String) objectEmail.get("subject");
-        return new Email(id, sender, senderName, subject, password);
+        String attachURL = (String) objectEmail.get("attachURL");
+        return new Email(id, sender, senderName, subject, password, attachURL);
     }
 }

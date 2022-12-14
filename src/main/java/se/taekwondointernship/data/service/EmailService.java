@@ -1,16 +1,21 @@
 package se.taekwondointernship.data.service;
 
+import org.springframework.transaction.annotation.Transactional;
 import se.taekwondointernship.data.models.dto.EmailDto;
 import se.taekwondointernship.data.models.entity.MessageEntity;
 import se.taekwondointernship.data.models.form.EmailForm;
 
 public interface EmailService {
     EmailDto create(EmailForm form);
-    EmailDto editSender(EmailForm form);
-    EmailDto editPassword(EmailForm form);
-    EmailDto editSenderName(EmailForm form);
-    EmailDto editSubject(EmailForm form);
-    void sending(String recipient, String url);
+    EmailDto editSender(String sender);
+    EmailDto editPassword(String password);
+    EmailDto editSenderName(String name);
+    EmailDto editSubject(String subject);
+    void sending(String recipient);
+
+    @Transactional
+    EmailDto editAttachURL(String attachURL);
+
     String getPassword();
     MessageEntity getEmailMessage();
 }

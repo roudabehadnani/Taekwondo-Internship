@@ -13,4 +13,5 @@ public class EmailDto {
     private String senderName;
     private String subject;
     private String password;
+    private String attachURL;
 }
