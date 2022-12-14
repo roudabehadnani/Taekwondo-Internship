@@ -2,7 +2,7 @@ package se.taekwondointernship.data.service;
 
 import org.springframework.transaction.annotation.Transactional;
 import se.taekwondointernship.data.models.dto.EmailDto;
-import se.taekwondointernship.data.models.entity.MessageEntity;
+import se.taekwondointernship.data.models.dto.MessageDto;
 import se.taekwondointernship.data.models.form.EmailForm;
 
 public interface EmailService {
@@ -17,5 +17,5 @@ public interface EmailService {
     EmailDto editAttachURL(String attachURL);
 
     String getPassword();
-    MessageEntity getEmailMessage();
+    MessageDto getEmailMessage();
 }

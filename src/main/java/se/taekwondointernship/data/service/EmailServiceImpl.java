@@ -17,8 +17,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import se.taekwondointernship.data.models.dto.EmailDto;
+import se.taekwondointernship.data.models.dto.MessageDto;
 import se.taekwondointernship.data.models.entity.Email;
-import se.taekwondointernship.data.models.entity.MessageEntity;
 import se.taekwondointernship.data.models.form.EmailForm;
 import se.taekwondointernship.data.repository.EmailRepository;
 
@@ -139,7 +139,7 @@ public class EmailServiceImpl implements EmailService{
 
     @Override
     @Transactional(readOnly = true)
-    public MessageEntity getEmailMessage() {
+    public MessageDto getEmailMessage() {
         return messageService.findMessage("emailMessage");
     }
 

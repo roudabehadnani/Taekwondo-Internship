@@ -57,9 +57,9 @@ public class MessageServiceImpl implements MessageService{
         return modelMapper.map(messageEntity, MessageDto.class);
     }
 
-    public MessageEntity findMessage(String url) {
+    public MessageDto findMessage(String url) {
         try {
-            return getFromExistingMessageJSON(url).get(0);
+            return modelMapper.map(getFromExistingMessageJSON(url).get(0), MessageDto.class);
         } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }

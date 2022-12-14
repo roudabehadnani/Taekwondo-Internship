@@ -25,6 +25,10 @@ public class MessageController {
     public ResponseEntity<MessageDto> editWelcome(@RequestBody MessageForm form){
         return ResponseEntity.ok(messageService.edit(form, "welcomeMessage.json"));
     }
+    @GetMapping(path = "/welcome")
+    public ResponseEntity<MessageDto> findWelcome(){
+        return ResponseEntity.ok(messageService.findMessage("welcomeMessage.json"));
+    }
     @PostMapping(path = "/news")
     public ResponseEntity<MessageDto> createNews(@RequestBody MessageForm form){
         System.out.println("### In Create Method ###");
@@ -34,6 +38,10 @@ public class MessageController {
     public ResponseEntity<MessageDto> editNews(@RequestBody MessageForm form){
         return ResponseEntity.ok(messageService.edit(form, "newsMessage.json"));
     }
+    @GetMapping(path = "/news")
+    public ResponseEntity<MessageDto> findNews(){
+        return ResponseEntity.ok(messageService.findMessage("newsMessage.json"));
+    }
     @PostMapping(path = "/email")
     public ResponseEntity<MessageDto> createMail(@RequestBody MessageForm form){
         return ResponseEntity.status(HttpStatus.CREATED).body(messageService.create(form, "emailMessage.json"));
@@ -41,5 +49,9 @@ public class MessageController {
     @PutMapping(path = "/email")
     public ResponseEntity<MessageDto> editMail(@RequestBody MessageForm form){
         return ResponseEntity.ok(messageService.edit(form, "emailMessage.json"));
+    }
+    @GetMapping(path = "/email")
+    public ResponseEntity<MessageDto> findMail(){
+        return ResponseEntity.ok(messageService.findMessage("emailMessage.json"));
     }
 }
